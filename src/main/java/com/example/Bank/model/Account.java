@@ -13,23 +13,24 @@ import java.math.BigDecimal;
 @Table(name = "accounts")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary Key
+    private Long id;
 
     @Column(unique = true, nullable = false)
-    private String accountNumber; // Уникальный номер счета
+    private String accountNumber;
 
     @Column(nullable = false)
-    private BigDecimal balance; // Баланс счета
+    private BigDecimal balance;
 
     @Column(nullable = false)
-    private String pinCode; // PIN-код для операций
+    private String pinCode;
 
     @ManyToOne
     @JsonIgnoreProperties("accounts")
     @JoinColumn(name = "beneficiary_id", nullable = false)
-    private Beneficiary beneficiary; // Связь с бенефициаром (ManyToOne)
+    private Beneficiary beneficiary;
 }
