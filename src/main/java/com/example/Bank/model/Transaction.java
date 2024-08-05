@@ -1,7 +1,6 @@
 package com.example.Bank.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -21,21 +20,21 @@ public class Transaction {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary Key
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
-    private Account account; // Связь с аккаунтом (ManyToOne)
+    private Account account;
 
     @Column(nullable = false)
-    private BigDecimal amount; // Сумма транзакции
+    private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType transactionType; // Тип транзакции
+    private TransactionType transactionType;
 
     @Column(nullable = false)
-    private LocalDateTime timestamp; // Время транзакции
+    private LocalDateTime timestamp;
 
     public Transaction(Account account, BigDecimal amount, TransactionType transactionType, LocalDateTime timestamp) {
         this.account = account;

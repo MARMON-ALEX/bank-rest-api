@@ -12,16 +12,17 @@ import java.util.List;
 @Table(name = "beneficiaries")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Beneficiary {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Primary Key
+    private Long id;
 
     @Column(nullable = false)
-    private String name; // Имя бенефициара
+    private String name;
 
     @OneToMany(mappedBy = "beneficiary", cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<Account> accounts; // Список аккаунтов (OneToMany)
+    private List<Account> accounts;
 }

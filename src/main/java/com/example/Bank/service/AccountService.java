@@ -1,41 +1,47 @@
 package com.example.Bank.service;
 
+import com.example.Bank.dto.CreateAccountRequest;
 import com.example.Bank.model.Account;
 import com.example.Bank.model.Beneficiary;
-import com.example.Bank.model.exeption.AccountNotFoundException;
+import com.example.Bank.exeption.AccountNotFoundException;
 import com.example.Bank.repository.AccountRepository;
 import com.example.Bank.repository.BeneficiaryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService {
 
     private final AccountRepository accountRepository;
     private final BeneficiaryRepository beneficiaryRepository;
 
-    @Autowired
-    public AccountService(AccountRepository accountRepository, BeneficiaryRepository beneficiaryRepository) {
-        this.accountRepository = accountRepository;
-        this.beneficiaryRepository = beneficiaryRepository;
-    }
+    @Transactional
+    public Account createAccount(CreateAccountRequest createAccountRequest) {
+        Beneficiary beneficiary;
 
-    public Account createAccount(String name, String pinCode) {
-        Beneficiary beneficiary = new Beneficiary();
-        beneficiary.setName(name);
-        beneficiaryRepository.save(beneficiary);
-
-        return accountRepository.save(createAccount(beneficiary, pinCode));
-    }
-
-    public Account createAccount(Long beneficiaryId, String pinCode) {
-        Beneficiary beneficiary = beneficiaryRepository.findById(beneficiaryId)
-                .orElseThrow(() -> new IllegalArgumentException("Beneficiary with ID " + beneficiaryId + " not found"));
-
-        return accountRepository.save(createAccount(beneficiary, pinCode));
+        if (createAccountRequest.getBeneficiaryId() != null) {
+            Optional<Beneficiary> optionalBeneficiary
+                    = beneficiaryRepository.findById(createAccountRequest.getBeneficiaryId());
+            if (optionalBeneficiary.isPresent()
+                    && optionalBeneficiary.get().getName().equals(createAccountRequest.getName())) {
+                beneficiary = optionalBeneficiary.get();
+            } else {
+                throw new IllegalArgumentException("beneficiary with this ID does not exist");
+            }
+        } else {
+            beneficiary = new Beneficiary();
+            beneficiary.setName(createAccountRequest.getName());
+            beneficiaryRepository.save(beneficiary);
+        }
+        return accountRepository.save(createAccount(beneficiary, createAccountRequest.getPinCode()));
     }
 
     private Account createAccount(Beneficiary beneficiary, String pinCode) {
@@ -48,30 +54,13 @@ public class AccountService {
         return account;
     }
 
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
-    }
-
-    public List<Account> getAccountsByBeneficiaryId(Long beneficiaryId) {
+    public List<Account> getAllAccounts(Long beneficiaryId) {
+        if (beneficiaryId == null)
+            return accountRepository.findAll();
         if (!beneficiaryRepository.existsById(beneficiaryId)) {
-            throw new IllegalArgumentException("Beneficiary with ID " + beneficiaryId + " not found");
+            throw new AccountNotFoundException("Beneficiary with ID " + beneficiaryId + " not found");
         }
         return accountRepository.findByBeneficiaryId(beneficiaryId);
-    }
-
-    public void deleteAccount(Long accountId) {
-        if (!accountRepository.existsById(accountId)) {
-            throw new AccountNotFoundException("Account with ID " + accountId + " not found");
-        }
-        accountRepository.deleteById(accountId);
-    }
-
-    public void deleteAccountsByBeneficiaryId(Long beneficiaryId) {
-        List<Account> accounts = accountRepository.findByBeneficiaryId(beneficiaryId);
-        if (accounts.isEmpty()) {
-            throw new IllegalArgumentException("No accounts found for Beneficiary with ID " + beneficiaryId);
-        }
-        accountRepository.deleteAll(accounts);
     }
 
     private String generateAccountNumber() {

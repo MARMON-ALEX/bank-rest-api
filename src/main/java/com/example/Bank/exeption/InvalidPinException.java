@@ -1,4 +1,4 @@
-package com.example.Bank.model.exeption;
+package com.example.Bank.exeption;
 
 public class InvalidPinException extends RuntimeException {
     public InvalidPinException(String message) {

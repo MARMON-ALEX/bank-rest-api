@@ -1,19 +1,22 @@
-package com.example.Bank.DTO;
+package com.example.Bank.dto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.math.BigDecimal;
+
 @Data
+@AllArgsConstructor
 public class TransferRequest {
     @NotNull(message = "From Account ID is mandatory")
-    private Long fromAccountId;
+    private String fromAccountNumber;
 
     @NotNull(message = "To Account ID is mandatory")
-    private Long toAccountId;
+    private String toAccountNumber;
 
     @NotNull(message = "Amount is mandatory")
     @Min(value = 0, message = "Amount must be greater than or equal to 0")

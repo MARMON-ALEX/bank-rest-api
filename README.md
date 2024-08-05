@@ -40,36 +40,16 @@
     GET /api/accounts
     ```
 
-- **Получить счета по ID бенефициара**
+- **Создать счет**
     ```http
-    GET /api/accounts/beneficiary/{beneficiaryId}
-    ```
-
-- **Создать счет по имени**
-    ```http
-    POST /api/accounts/create/by-name
-    ```
-
-- **Создать счет по ID**
-    ```http
-    POST /api/accounts/create/by-id
-    ```
-
-- **Удалить счет по ID**
-    ```http
-    DELETE /api/accounts/{accountId}
-    ```
-
-- **Удалить счета по ID бенефициара**
-    ```http
-    DELETE /api/accounts/beneficiary/{beneficiaryId}
+    POST /api/accounts/create
     ```
 
 #### Управление транзакциями
 
-- **Получить транзакции по ID счета**
+- **Получить транзакции по номеру счета**
     ```http
-    GET /api/transactions/{accountId}
+    GET /api/transactions/{accountNumber}
     ```
 
 - **Внести средства**
@@ -89,10 +69,10 @@
 
 ### Примеры запросов
 
-#### Создание счета по имени
+#### Создание счета
 
 ```http
-POST /api/accounts/create/by-name
+POST /api/accounts/create
 Content-Type: application/json
 
 {
@@ -100,17 +80,7 @@ Content-Type: application/json
   "pinCode": "1234"
 }
 ```
-#### Создание счета по ID бенефициара
 
-```http 
-POST /api/accounts/create/by-id
-Content-Type: application/json
-
-{
-  "beneficiaryId": 1,
-  "pinCode": "1234"
-}
-```
 #### Внесение средств
 
 ```http 
@@ -118,7 +88,7 @@ POST /api/transactions/deposit
 Content-Type: application/json
 
 {
-  "accountId": 1,
+  "accountNumber": 1,
   "amount": 100
 }
 ```
@@ -129,7 +99,7 @@ POST /api/transactions/withdraw
 Content-Type: application/json
 
 {
-  "accountId": 1,
+  "accountNumber": 1234567890,
   "amount": 50,
   "pinCode": "1234"
 }
@@ -140,8 +110,8 @@ POST /api/transactions/transfer
 Content-Type: application/json
 
 {
-  "fromAccountId": 1,
-  "toAccountId": 2,
+  "fromAccountNumber": 1234567890,
+  "toAccountNumber": 0987654321,
   "amount": 25,
   "pinCode": "1234"
 }
